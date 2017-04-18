@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Si570.h>
-#include <si5351.h>
+#include <si5351.h>  /* Assumes Etherkit Si5351 library from https://github.com/etherkit/Si5351Arduino    */
 #include <LiquidCrystal.h>
 
 LiquidCrystal lcd(12, 11, 10, 9, 8, 7);
@@ -87,7 +87,7 @@ void setFrequency(unsigned long f){
    if (si570 != NULL)
      si570->setFrequency(f);
    else
-     si5351.set_freq(f,  0, SI5351_CLK1); 
+     si5351.set_freq(f*100, SI5351_CLK0); /* Change this to suit pin out on Si5351 */
    frequency = f;
 }
 
@@ -200,6 +200,7 @@ void setup()
     Serial.println("*Si570 Not found\n");   
     si570 = NULL;
     
+    si5351.init(SI5351_CRYSTAL_LOAD_10PF, 27000000, 0); // Needed for use with latest library  Assumes 27MHz crystal
     Serial.println("*Si5350 ON");       
     printLine2("Si5351 ON");    
     delay(10);
