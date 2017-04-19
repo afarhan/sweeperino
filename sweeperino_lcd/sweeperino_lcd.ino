@@ -108,7 +108,7 @@ void doSweep(){
     Serial.write(c);
   }
   Serial.write("end\n");
-//  si5351.set_freq(fromFrequency,  0, SI5351_CLK1);
+
   sweepBusy = 0;
 }
 
@@ -218,7 +218,7 @@ void updateDisplay(){
   int j;
 
   sprintf(b, "%9ld", frequency);
-  sprintf(c, "%.3s.%.3s.%3s ",  b, b+3, b+6);
+  sprintf(c, "%.3s.%.3s.%3s MHz ",  b, b+3, b+6);
   printLine1(c);  
 
   sprintf(c,  "  %d.%d dbm  ", dbm_reading/10, abs(dbm_reading % 10));
