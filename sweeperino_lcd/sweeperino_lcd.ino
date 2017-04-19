@@ -87,7 +87,7 @@ void setFrequency(unsigned long f){
    if (si570 != NULL)
      si570->setFrequency(f);
    else
-     si5351.set_freq(f*100, SI5351_CLK0); /* Change this to suit pin out on Si5351 */
+     si5351.set_freq(f*100ULL, SI5351_CLK0); /* Change this to suit pin out on Si5351 */
    frequency = f;
 }
 
