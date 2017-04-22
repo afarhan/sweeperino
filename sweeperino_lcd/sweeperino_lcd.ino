@@ -216,12 +216,17 @@ void setup()
 
 void updateDisplay(){
   int j;
-
+  char sign[3];
   sprintf(b, "%9ld", frequency);
   sprintf(c, "%.3s.%.3s.%3s MHz ",  b, b+3, b+6);
   printLine1(c);  
-
-  sprintf(c,  "  %d.%d dbm  ", dbm_reading/10, abs(dbm_reading % 10));
+//Following from PA3CMO to correct negative value between 0 and -1dBm
+  if (dbm_reading < 0 and dbm_reading/10 == 0) {
+    sprintf(sign, "-");
+  } else {
+    sprintf(sign, "");
+  }
+  sprintf(c,  " %s%d.%d dBm  ", sign, dbm_reading/10, abs(dbm_reading % 10));
   printLine2(c);
 }
 
