@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Si570.h>
-#include <si5351.h>
+#include <si5351.h>  /* Assumes Etherkit Si5351 library from https://github.com/etherkit/Si5351Arduino    */
 #include <LiquidCrystal.h>
 
 LiquidCrystal lcd(12, 11, 10, 9, 8, 7);
@@ -87,7 +87,7 @@ void setFrequency(unsigned long f){
    if (si570 != NULL)
      si570->setFrequency(f);
    else
-     si5351.set_freq(f,  0, SI5351_CLK1); 
+     si5351.set_freq(f*100ULL, SI5351_CLK0); /* Change this to suit pin out on Si5351 */
    frequency = f;
 }
 
@@ -108,7 +108,7 @@ void doSweep(){
     Serial.write(c);
   }
   Serial.write("end\n");
-//  si5351.set_freq(fromFrequency,  0, SI5351_CLK1);
+
   sweepBusy = 0;
 }
 
@@ -200,6 +200,7 @@ void setup()
     Serial.println("*Si570 Not found\n");   
     si570 = NULL;
     
+    si5351.init(SI5351_CRYSTAL_LOAD_10PF, 27000000, 0); // Needed for use with latest library  Assumes 27MHz crystal
     Serial.println("*Si5350 ON");       
     printLine2("Si5351 ON");    
     delay(10);
@@ -215,12 +216,17 @@ void setup()
 
 void updateDisplay(){
   int j;
-
+  char sign[3];
   sprintf(b, "%9ld", frequency);
-  sprintf(c, "%.3s.%.3s.%3s ",  b, b+3, b+6);
+  sprintf(c, "%.3s.%.3s.%3s MHz ",  b, b+3, b+6);
   printLine1(c);  
-
-  sprintf(c,  "  %d.%d dbm  ", dbm_reading/10, abs(dbm_reading % 10));
+//Following from PA3CMO to correct negative value between 0 and -1dBm
+  if (dbm_reading < 0 and dbm_reading/10 == 0) {
+    sprintf(sign, "-");
+  } else {
+    sprintf(sign, "");
+  }
+  sprintf(c,  " %s%d.%d dBm  ", sign, dbm_reading/10, abs(dbm_reading % 10));
   printLine2(c);
 }
 
